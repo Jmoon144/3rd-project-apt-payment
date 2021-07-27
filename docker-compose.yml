@@ -1,33 +1,45 @@
 version: '3'
+
+volumes:
+  data: {}
+
 services:
-    apt_db:
-        image: mysql:5.7
-        volumes:
-            - ./db_data:/var/lib/mysql:rw
-        environment:
-            - MYSQL_ROOT_PASSWORD=password1
-            - MYSQL_DATABASE=apt
-        ports:
-            - 3306:3306
-        command:
-            - --default-authentication-plugin=mysql_native_password
-            - --character-set-server=utf8mb4
-            - --collation-server=utf8mb4_unicode_ci
-    apt:
-        build:
-            context: .
-            dockerfile: ./Dockerfile
-        environment: 
-            - DJANGO_DB_HOST=apt_db
-            - DJANGO_DB_PORT=3306
-            - DJANGO_DB_NAME=apt
-            - DJANGO_DB_USERNAME=root
-            - DJANGO_DB_PASSWORD=password1
-        ports:
-            - 8000:8000
-        command: >-
-            sh -c 'python manage.py migrate &&
-                python manage.py runserver 0:8000'
-        volumes:
-            - .:/usr/src/app
-        restart: always
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-dev
+    volumes:
+      - .:/app/
+    environment:
+      - DB_NAME=wecode_backend
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=3306
+      - SECRET_KEY=secretkey
+      - ALGORITHM=HS256
+    ports:
+      - 8000:8000
+    restart: always
+    depends_on:
+      - db
+    command: >-
+        sh -c 'python manage.py makemigrations &&
+               python manage.py migrate &&
+               python manage.py runserver 0.0.0.0:8000'
+
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+        #      - MYSQL_USER=backend_mentor
+      - MYSQL_DATABASE=wecode_backend
+      - MYSQL_PASSWORD=password
+    ports:
+      - 3306:3306
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --default-authentication-plugin=mysql_native_password
+    volumes:
+      - data:/var/lib/mysql

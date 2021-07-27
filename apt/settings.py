@@ -10,23 +10,22 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+
 from pathlib     import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2zdh6vdhr%eo8fx9*u=nl(_3yxa4c0#0nyh&ye%n-$wc9534#e'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -41,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'api',
-    'rest_auth',
+    'accounts'
 ]
 
 REST_FRAMEWORK = {
@@ -85,21 +84,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'apt.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DJANGO_DB_NAME', 'apt'),
-        'USER': os.environ.get('DJANGO_DB_USERNAME', 'root'),
-        'PASSWORD': os.environ.get('DJANGO_DB_PASSWORD', 'password1'),
-        'HOST': os.environ.get('DJANGO_DB_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('DJANGO_DB_PORT', '3306'),
+        'NAME'     : os.environ.get('DB_NAME', 'apt'),
+        'USER'     : os.environ.get('DB_USERNAME', 'root'),
+        'PASSWORD' : os.environ.get('DB_PASSWORD', 'password1'),
+        'HOST'     : os.environ.get('DB_HOST', '127.0.0.1'),
+        'PORT'     : os.environ.get('DB_PORT', '3306'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -169,3 +166,5 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
+
+AUTH_USER_MODEL = 'accounts.User'

@@ -1,0 +1,16 @@
+#################################################
+# Dev Dockerfile (Dependencies, Build)
+#################################################
+FROM python:3.8
+
+ENV PYTHONUNBUFFERED=0
+
+WORKDIR /app/
+
+# Install Production Depedencies First
+COPY requirements/ /app/requirements/
+RUN pip install --no-cache-dir -r requirements/requirements-dev.txt
+
+COPY . /app/
+
+EXPOSE 8000
