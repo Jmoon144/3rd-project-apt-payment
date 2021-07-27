@@ -15,13 +15,13 @@ class PublicUserAuthentication(BaseAuthentication):
     def authenticate(self, request):
         print("++")
         print(f"request : {dir(request)}")
-        authentication = request.META.get('authentication', 'default')
+        authentication = request.META.get('HTTP_AUTH', 'default')
 
         params = request.query_params.get('key')
         print(f"auth : {authentication}")
         print(f"params : {params}")
 
-        return User.objects.get(id=1)
+        return 
 
 class PublicUserDetailView(generics.RetrieveAPIView):
     authentication_classes = [PublicUserAuthentication, ]
